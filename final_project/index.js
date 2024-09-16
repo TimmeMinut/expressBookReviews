@@ -15,19 +15,22 @@ app.use("/customer", session({
 }))
 
 app.use("/customer/auth/*", function auth(req, res, next) {
-    //Write the authenication mechanism here
-    const {username, password} = req.body
-
-    if(username in users && users[username] === password){
-        req.session.user = username;
-        res.send("Logged in successfully")
-    } else{
-        res.send("Invalid credentials")
+    if (req.session.authorization) { 
+        let token = req.session.authorization['accessToken']; 
+        jwt.verify(token, "access", (err, user) => { 
+            if (!err) {
+                req.user = user;
+                next();
+            } else {
+                return res.status(403).json({ message: "User not authenticated" });
+            }
+        });
+    } else {
+        return res.status(403).json({ message: "User not logged in" });
     }
-
 });
 
-const PORT = 5000;
+const PORT = 8080;
 
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);

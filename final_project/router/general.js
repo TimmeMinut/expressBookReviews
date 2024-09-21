@@ -77,7 +77,7 @@ public_users.get('/author/:author', async function (req, res) {
 
 async function getBookTitle(title) {
   let result = []
-  for (let key in books) {
+  for (let key in books) {w
     if (books[key].title === title) {
       result.push(books[key])
     }
